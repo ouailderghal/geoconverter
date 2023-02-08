@@ -19,7 +19,55 @@ typedef struct {
   SubCoordinate rhs;
 } DMSGeoCoordinate;
 
-void print_geocoordinate(DMSGeoCoordinate *coordinate) {
+typedef struct {
+  char lat_direction;
+  double lat;
+  char lon_direction;
+  double lon;
+} DDGeoCoordinate;
+
+DDGeoCoordinate dms_to_dd(DMSGeoCoordinate dms_coordiante) {
+  DDGeoCoordinate dd_coordinate = {0};
+
+  dd_coordinate.lat = dms_coordiante.lhs.degree +
+                      (dms_coordiante.lhs.minute / 60) +
+                      (dms_coordiante.lhs.seconde / 3600);
+
+  dd_coordinate.lon = dms_coordiante.rhs.degree +
+                      (dms_coordiante.rhs.minute / 60) +
+                      (dms_coordiante.rhs.seconde / 3600);
+
+  switch (dms_coordiante.lhs.direction) {
+  case 'W':
+  case 'S':
+    dd_coordinate.lat_direction = '-';
+    break;
+  case 'E':
+  case 'N':
+    dd_coordinate.lat_direction = '+';
+    break;
+  }
+
+  switch (dms_coordiante.rhs.direction) {
+  case 'W':
+  case 'S':
+    dd_coordinate.lon_direction = '-';
+    break;
+  case 'E':
+  case 'N':
+    dd_coordinate.lon_direction = '+';
+    break;
+  }
+
+  return dd_coordinate;
+}
+
+void print_dd_coordinate(DDGeoCoordinate *coordinate) {
+  printf("%c%f, %c%f\n", coordinate->lat_direction, coordinate->lat,
+         coordinate->lon_direction, coordinate->lon);
+}
+
+void print_dms_coordinate(DMSGeoCoordinate *coordinate) {
   printf("(%f, %f, %f, %c) (%f, %f, %f, %c)\n", coordinate->lhs.degree,
          coordinate->lhs.minute, coordinate->lhs.seconde,
          coordinate->lhs.direction, coordinate->rhs.degree,
@@ -136,7 +184,9 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    print_geocoordinate(&coordinate);
+    // print_dms_coordinate(&coordinate);
+    DDGeoCoordinate c = dms_to_dd(coordinate);
+    print_dd_coordinate(&c);
   }
 
   return EXIT_SUCCESS;
