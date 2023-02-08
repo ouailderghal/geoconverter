@@ -8,9 +8,9 @@
 #include "sv.h"
 
 typedef struct {
-  double degree;
-  double minute;
-  double seconde;
+  long double degree;
+  long double minute;
+  long double seconde;
   char direction;
 } SubCoordinate;
 
@@ -21,9 +21,9 @@ typedef struct {
 
 typedef struct {
   char lat_direction;
-  double lat;
+  long double lat;
   char lon_direction;
-  double lon;
+  long double lon;
 } DDGeoCoordinate;
 
 DDGeoCoordinate dms_to_dd(DMSGeoCoordinate dms_coordiante) {
@@ -63,12 +63,12 @@ DDGeoCoordinate dms_to_dd(DMSGeoCoordinate dms_coordiante) {
 }
 
 void print_dd_coordinate(DDGeoCoordinate *coordinate) {
-  printf("%c%f, %c%f\n", coordinate->lat_direction, coordinate->lat,
+  printf("%c%.8Lf, %c%.8Lf\n", coordinate->lat_direction, coordinate->lat,
          coordinate->lon_direction, coordinate->lon);
 }
 
 void print_dms_coordinate(DMSGeoCoordinate *coordinate) {
-  printf("(%f, %f, %f, %c) (%f, %f, %f, %c)\n", coordinate->lhs.degree,
+  printf("(%Lf, %Lf, %Lf, %c) (%Lf, %Lf, %Lf, %c)\n", coordinate->lhs.degree,
          coordinate->lhs.minute, coordinate->lhs.seconde,
          coordinate->lhs.direction, coordinate->rhs.degree,
          coordinate->rhs.minute, coordinate->rhs.seconde,
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
       String_View token_string = sv_chop_by_delim(&line, ' ');
 
       char *endptr;
-      double token = strtod(token_string.data, &endptr);
+      long double token = strtod(token_string.data, &endptr);
 
       if (*endptr == 'N' || *endptr == 'E' || *endptr == 'S' ||
           *endptr == 'W') {
