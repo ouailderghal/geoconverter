@@ -1,6 +1,5 @@
 data/
 out/
-data.csv
 nobuild
 converter
 *.zip

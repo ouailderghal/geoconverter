@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
   GO_REBUILD_URSELF(argc, argv);
   CMD("cc", CFLAGS, "-o", "converter", "converter.c");
-  CMD("./converter", "data.csv");
+  CMD("./converter", "data.txt");
 
   return 0;
 }
