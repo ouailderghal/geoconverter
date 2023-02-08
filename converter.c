@@ -17,9 +17,9 @@ typedef struct {
 typedef struct {
   SubCoordinate lhs;
   SubCoordinate rhs;
-} GeoCoordinate;
+} DMSGeoCoordinate;
 
-void print_geocoordinate(GeoCoordinate *coordinate) {
+void print_geocoordinate(DMSGeoCoordinate *coordinate) {
   printf("(%f, %f, %f, %c) (%f, %f, %f, %c)\n", coordinate->lhs.degree,
          coordinate->lhs.minute, coordinate->lhs.seconde,
          coordinate->lhs.direction, coordinate->rhs.degree,
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
 
   for (size_t row = 0; content.count > 0; ++row) {
     String_View line = sv_chop_by_delim(&content, '\n');
-    GeoCoordinate coordinate;
+    DMSGeoCoordinate coordinate;
 
     for (size_t t = 0; line.count > 0; ++t) {
       String_View token_string = sv_chop_by_delim(&line, ' ');
