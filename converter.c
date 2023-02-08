@@ -1,10 +1,31 @@
+#include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <string.h>
 
 #define SV_IMPLEMENTATION
 #include "sv.h"
+
+typedef struct {
+  double degree;
+  double minute;
+  double seconde;
+  char direction;
+} SubCoordinate;
+
+typedef struct {
+  SubCoordinate lhs;
+  SubCoordinate rhs;
+} GeoCoordinate;
+
+void print_geocoordinate(GeoCoordinate *coordinate) {
+  printf("(%f, %f, %f, %c) (%f, %f, %f, %c)\n", coordinate->lhs.degree,
+         coordinate->lhs.minute, coordinate->lhs.seconde,
+         coordinate->lhs.direction, coordinate->rhs.degree,
+         coordinate->rhs.minute, coordinate->rhs.seconde,
+         coordinate->rhs.direction);
+}
 
 char *read_file(const char *file_path, size_t *out_file_size) {
   FILE *file = fopen(file_path, "rb");
@@ -68,11 +89,55 @@ int main(int argc, char *argv[]) {
   char *file_content = read_file(file_path, &file_size);
 
   String_View content = {
-    .count = file_size,
-    .data = file_content,
+      .count = file_size,
+      .data = file_content,
   };
 
-  printf(SV_Fmt "", SV_Arg(content));
+  for (size_t row = 0; content.count > 0; ++row) {
+    String_View line = sv_chop_by_delim(&content, '\n');
+    GeoCoordinate coordinate;
+
+    for (size_t t = 0; line.count > 0; ++t) {
+      String_View token_string = sv_chop_by_delim(&line, ' ');
+
+      char *endptr;
+      double token = strtod(token_string.data, &endptr);
+
+      if (*endptr == 'N' || *endptr == 'E' || *endptr == 'S' ||
+          *endptr == 'W') {
+        switch (t) {
+        case 3:
+          coordinate.lhs.direction = *endptr;
+          break;
+        case 7:
+          coordinate.rhs.direction = *endptr;
+        }
+      } else {
+        switch (t) {
+        case 0:
+          coordinate.lhs.degree = token;
+          break;
+        case 1:
+          coordinate.lhs.minute = token;
+          break;
+        case 2:
+          coordinate.lhs.seconde = token;
+          break;
+        case 4:
+          coordinate.rhs.degree = token;
+          break;
+        case 5:
+          coordinate.rhs.minute = token;
+          break;
+        case 6:
+          coordinate.rhs.seconde = token;
+          break;
+        }
+      }
+    }
+
+    print_geocoordinate(&coordinate);
+  }
 
   return EXIT_SUCCESS;
 }
