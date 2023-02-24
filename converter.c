@@ -12,22 +12,22 @@ typedef struct {
   long double minute;
   long double seconde;
   char direction;
-} SubCoordinate;
+} DMSSubCoo;
 
 typedef struct {
-  SubCoordinate lhs;
-  SubCoordinate rhs;
-} DMSGeoCoordinate;
+  DMSSubCoo lhs;
+  DMSSubCoo rhs;
+} DMSCoo;
 
 typedef struct {
   char lat_direction;
   long double lat;
   char lon_direction;
   long double lon;
-} DDGeoCoordinate;
+} DDCoo;
 
-DDGeoCoordinate dms_to_dd(DMSGeoCoordinate dms_coordiante) {
-  DDGeoCoordinate dd_coordinate = {0};
+DDCoo dms_to_dd(DMSCoo dms_coordiante) {
+  DDCoo dd_coordinate = {0};
 
   dd_coordinate.lat = dms_coordiante.lhs.degree +
                       (dms_coordiante.lhs.minute / 60) +
@@ -62,12 +62,12 @@ DDGeoCoordinate dms_to_dd(DMSGeoCoordinate dms_coordiante) {
   return dd_coordinate;
 }
 
-void print_dd_coordinate(DDGeoCoordinate *coordinate) {
+void print_dd_coordinate(DDCoo *coordinate) {
   printf("%c%.8Lf, %c%.8Lf\n", coordinate->lat_direction, coordinate->lat,
          coordinate->lon_direction, coordinate->lon);
 }
 
-void print_dms_coordinate(DMSGeoCoordinate *coordinate) {
+void print_dms_coordinate(DMSCoo *coordinate) {
   printf("(%Lf, %Lf, %Lf, %c) (%Lf, %Lf, %Lf, %c)\n", coordinate->lhs.degree,
          coordinate->lhs.minute, coordinate->lhs.seconde,
          coordinate->lhs.direction, coordinate->rhs.degree,
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
 
   for (size_t row = 0; content.count > 0; ++row) {
     String_View line = sv_chop_by_delim(&content, '\n');
-    DMSGeoCoordinate coordinate;
+    DMSCoo coordinate;
 
     for (size_t t = 0; line.count > 0; ++t) {
       String_View token_string = sv_chop_by_delim(&line, ' ');
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     }
 
     // print_dms_coordinate(&coordinate);
-    DDGeoCoordinate c = dms_to_dd(coordinate);
+    DDCoo c = dms_to_dd(coordinate);
     print_dd_coordinate(&c);
   }
 
